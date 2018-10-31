@@ -1,0 +1,33 @@
+{
+  "name": "Job",
+  "plural": "jobs",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "jobId": {
+      "type": "number",
+      "id": true
+    },
+    "appId": {
+      "type": "string",
+      "required": true
+    },
+    "submissionDate": {
+      "type": "date",
+      "required": true
+    },
+    "inputZipURL": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

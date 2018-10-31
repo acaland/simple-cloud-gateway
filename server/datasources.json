@@ -1,0 +1,23 @@
+{
+  "db": {
+    "name": "db",
+    "connector": "memory"
+  },
+  "mongoDS": {
+    "host": "localhost",
+    "port": 27017,
+    "url": "",
+    "database": "getting_started",
+    "password": "",
+    "name": "mongoDS",
+    "user": "",
+    "connector": "mongodb"
+  },
+  "localStorage": {
+    "name": "localStorage",
+    "connector": "loopback-component-storage",
+    "provider": "filesystem",
+    "root": "./server/storage",
+    "nameConflict": "makeUnique"
+  }
+}

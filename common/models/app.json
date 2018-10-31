@@ -1,0 +1,36 @@
+{
+  "name": "App",
+  "plural": "apps",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "portmapping": {
+      "type": "string"
+    },
+    "workflowURL": {
+      "type": "string",
+      "required": true
+    },
+    "credentialId": {
+      "type": "string",
+      "required": true
+    },
+    "owner": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
