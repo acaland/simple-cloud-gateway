@@ -4,7 +4,7 @@ var request = require('request');
 var fs = require('fs');
 var AdmZip = require('adm-zip');
 
-var destFile = 'x509up.CESNET-MetaCloud';
+var destFile = 'x509up.CESNET-VisIVO';
 var REMOTEURL = 'http://vialactea-sg.oact.inaf.it:8080/wspgrade/RemoteServlet';
 var REMOTEPASSWORD = 'hp39A11';
 
@@ -69,7 +69,10 @@ module.exports = function(Job) {
 
       // salvataggio su db
       console.log(context.result);
-      next();
+      modelInstance.updateAttribute('status', context.result.status, function(err, instance) {
+          next();
+      });
+
     });
   });
 
@@ -96,6 +99,7 @@ module.exports = function(Job) {
       App.findById(appId, function(err, instance) {
         var workflowURL = instance.workflowURL;
         var portmappingURL = instance.portmapping;
+        var credentialId = instance.credentialId;
 
         // salvare su temp directory con un identificativo univoco
         console.log('Retrieving workflow file from', workflowURL);
@@ -110,7 +114,7 @@ module.exports = function(Job) {
                 wfdesc: fs.createReadStream('workflow.xml'),
                 inputzip: fs.createReadStream('inputs.zip'),
                 portmapping: fs.createReadStream('portmapping.txt'),
-                // certs: fs.createReadStream('certs.zip'),
+                certs: fs.createReadStream('certs.zip'),
               };
               console.log('Ready to submit the job to the gUSE Remote APIs');
               request.post({
@@ -126,6 +130,7 @@ module.exports = function(Job) {
                   console.log('jobID:', body);
                   context.args.data.submissionDate = Date.now();
                   context.args.data.jobId = body;
+                  context.args.data.status = 'submitted';
                   // salvataggio su db
                   next();
                 }
@@ -144,9 +149,11 @@ module.exports = function(Job) {
    */
 
   Job.prototype.output = function(callback, id) {
-    var data = Buffer.from('this is a tést');
+    // var data = Buffer.from('this is a tést');
 
-    const jobID = this.jobId;
+    var currentJob = this;
+    const jobID = currentJob.jobId;
+    var currentUser = currentJob.inputZipURL.split("/")[5];
     console.log("jobID", jobID);
 
 
@@ -155,7 +162,13 @@ module.exports = function(Job) {
       ID: jobID,
       pass: REMOTEPASSWORD,
     };
-    console.log(formData);
+    console.log("Job", currentJob);
+    if (currentJob.status != "finished") {
+      return callback({statusCode: 404, message: "Job status " + currentJob.status});
+    }
+    // if (currentJob.downloadURL) {
+    //   return callback({statusCode: 201, downloadURL: currentJob.downloadURL});
+    // }
     request({
         method: 'POST',
         url: REMOTEURL,
@@ -187,8 +200,14 @@ module.exports = function(Job) {
       console.log("response");
       // console.log(response);
       callback(null, response, 'application/octet-stream', 'attachment; filename=output.zip')
+      //callback(null, response);
+      var baseURL = app.get('url').replace(/\/$/, '');
+      console.log("dentro la callback");
+      console.log(currentJob);
+
+      currentJob.updateAttribute("downloadURL", baseURL + "/api/containers/" + currentUser + "/download/" + jobID + "_output.zip");
     })
-    // .pipe(fs.createWriteStream("output.zip"));
+    .pipe(fs.createWriteStream("./server/storage/" + currentUser + "/" + jobID + "_output.zip"));
 
     // console.log(jobId);
     // TODO
