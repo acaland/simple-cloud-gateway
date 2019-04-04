@@ -29,5 +29,34 @@
   "validations": [],
   "relations": {},
   "acls": [],
-  "methods": {}
+  "methods": {
+    "prototype.output": {
+      "accepts": [
+
+      ],
+      "returns": [
+        {
+          "arg": "data",
+          "type": "file",
+          "root": true,
+          "description": "A zip file containing the output"
+        },
+        {"arg": "Content-Type", "type": "string", "http": { "target": "header" }},
+        {"arg": "Content-Disposition", "type": "string", "http": { "target": "header" }}
+      ],
+      "description": "Return the output of the current job",
+      "http": [
+        {
+          "path": "/output",
+          "verb": "get",
+          "errorStatus": 404
+        },
+        {
+          "path": "/getOutput",
+          "verb": "get",
+          "errorStatus": 404
+        }
+      ]
+    }
+  }
 }

@@ -6,12 +6,16 @@ var AdmZip = require('adm-zip');
 
 var destFile = 'x509up.CESNET-MetaCloud';
 var REMOTEURL = 'http://vialactea-sg.oact.inaf.it:8080/wspgrade/RemoteServlet';
+var REMOTEPASSWORD = 'hp39A11';
 
 var app = require('../../server/server.js');
 
 function downloadProxy(_cb) {
+  // use the robot on the server at the moment
+  // _cb(null);
+  // return;
   var url =
-    'http://etokenserver2.ct.infn.it:8082/eTokenServer/eToken/bd89dbc662dc93b1e6047e788a092f2d?voms=fedcloud.egi.eu:/fedcloud.egi.eu&proxy-renewal=false&disable-voms-proxy=false&rfc-proxy=true&cn-label=eToken:Empty';
+    'http://etokenserver2.ct.infn.it:8082/eTokenServer/eToken/c7caed84988cf58038e41860b74c8f1b?voms=fedcloud.egi.eu:/fedcloud.egi.eu&proxy-renewal=false&disable-voms-proxy=false&rfc-proxy=true&cn-label=eToken:Empty';
 
   request(url)
     .pipe(fs.createWriteStream(destFile))
@@ -40,14 +44,18 @@ function downloadFile(url, dest, _cb) {
 }
 
 module.exports = function(Job) {
+
   Job.afterRemote('findById', function(context, modelInstance, next) {
     console.log('before findById', context.args.id);
     var formData = {
       m: 'info',
-      pass: 'hp39A11',
+      pass: REMOTEPASSWORD,
       ID: context.args.id,
     };
-    request.post({url: REMOTEURL, formData: formData}, function(
+    request.post({
+      url: REMOTEURL,
+      formData: formData
+    }, function(
       err,
       httpResponse,
       body
@@ -65,6 +73,8 @@ module.exports = function(Job) {
     });
   });
 
+
+
   Job.beforeRemote('create', function(context, user, next) {
     console.log('Prepare for job submission');
     var req = context.req;
@@ -72,48 +82,117 @@ module.exports = function(Job) {
     console.log('Retrieving proxy from eTokenServer');
     downloadProxy(function(err) {
       if (err)
-        res.status(401).send({error: 'Error while downloading the proxy'});
+        res.status(401).send({
+          error: 'Error while downloading the proxy'
+        });
 
       var App = app.models.App;
       var appId = context.args.data.appId;
-      if (!appId) res.status(500).send({error: 'missing appId'});
+      if (!appId) res.status(500).send({
+        error: 'missing appId'
+      });
       var inputZipURL = context.args.data.inputZipURL;
       console.log('Looking for appId', appId);
       App.findById(appId, function(err, instance) {
         var workflowURL = instance.workflowURL;
-        var portmapping = instance.portmapping;
+        var portmappingURL = instance.portmapping;
+
         // salvare su temp directory con un identificativo univoco
         console.log('Retrieving workflow file from', workflowURL);
         downloadFile(workflowURL, 'workflow.xml', function(err) {
           console.log('Retrieving input files from', inputZipURL);
           downloadFile(inputZipURL, 'inputs.zip', function(err) {
-            var formData = {
-              m: 'submit',
-              pass: 'hp39A11',
-              wfdesc: fs.createReadStream('workflow.xml'),
-              inputzip: fs.createReadStream('inputs.zip'),
-              portmapping: portmapping,
-              certs: fs.createReadStream('certs.zip'),
-            };
-            console.log('Ready to submit the job to the gUSE Remote APIs');
-            request.post(
-              {url: REMOTEURL, formData: formData},
-              function optionalCallback(err, httpResponse, body) {
-                if (err) console.log(err);
-                console.log(
-                  httpResponse.statusCode,
-                  httpResponse.statusMessage
-                );
-                console.log('jobID:', body);
-                context.args.data.submissionDate = Date.now();
-                context.args.data.jobId = body;
-                // salvataggio su db
-                next();
-              }
-            );
+            console.log('Retrieving portmapping.txt from', portmappingURL);
+            downloadFile(portmappingURL, 'portmapping.txt', function(err) {
+              var formData = {
+                m: 'submit',
+                pass: REMOTEPASSWORD,
+                wfdesc: fs.createReadStream('workflow.xml'),
+                inputzip: fs.createReadStream('inputs.zip'),
+                portmapping: fs.createReadStream('portmapping.txt'),
+                // certs: fs.createReadStream('certs.zip'),
+              };
+              console.log('Ready to submit the job to the gUSE Remote APIs');
+              request.post({
+                  url: REMOTEURL,
+                  formData: formData
+                },
+                function optionalCallback(err, httpResponse, body) {
+                  if (err) console.log(err);
+                  console.log(
+                    httpResponse.statusCode,
+                    httpResponse.statusMessage
+                  );
+                  console.log('jobID:', body);
+                  context.args.data.submissionDate = Date.now();
+                  context.args.data.jobId = body;
+                  // salvataggio su db
+                  next();
+                }
+              );
+            });
           });
         });
       });
     });
   });
+
+  /**
+   * Return the output of the current job
+   * @param {string} jobId The JobId you are retrieving the output from
+   * @param {Function(Error, buffer)} callback
+   */
+
+  Job.prototype.output = function(callback, id) {
+    var data = Buffer.from('this is a tést');
+
+    const jobID = this.jobId;
+    console.log("jobID", jobID);
+
+
+    var formData = {
+      m: 'download',
+      ID: jobID,
+      pass: REMOTEPASSWORD,
+    };
+    console.log(formData);
+    request({
+        method: 'POST',
+        url: REMOTEURL,
+        formData: formData
+      }
+      // function optionalCallback(err, httpResponse, body) {
+      //   if (err) console.log(err);
+      //   console.log(
+      //     httpResponse.statusCode,
+      //     httpResponse.statusMessage
+      //   );
+      //
+      //   if (body == "FALSE\n") {
+      //     return callback({statusCode: 404, message: "Output already downloaded"}, body);
+      //     console.log('data:', body);
+      //   } else {
+      //       return callback(null, body);
+      //   }
+      //
+      //
+      // }
+    )
+    .on('error', function(err) {
+      console.log("ERRORE");
+      console.error(err);
+      callback(err);
+    })
+    .on('response', function(response) {
+      console.log("response");
+      // console.log(response);
+      callback(null, response, 'application/octet-stream', 'attachment; filename=output.zip')
+    })
+    // .pipe(fs.createWriteStream("output.zip"));
+
+    // console.log(jobId);
+    // TODO
+
+  };
+
 };
