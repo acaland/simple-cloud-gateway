@@ -69,6 +69,9 @@ module.exports = function(Job) {
 
       // salvataggio su db
       console.log(context.result);
+      if (context.result.status.startsWith("not valid data")) {
+        context.result.status = "Downloaded";
+      }
       modelInstance.updateAttribute('status', context.result.status, function(err, instance) {
           next();
       });
@@ -163,12 +166,12 @@ module.exports = function(Job) {
       pass: REMOTEPASSWORD,
     };
     console.log("Job", currentJob);
-    if (currentJob.status != "finished") {
+    if (currentJob.status != "finished" && currentJob.status != "Downloaded") {
       return callback({statusCode: 404, message: "Job status " + currentJob.status});
     }
-    // if (currentJob.downloadURL) {
-    //   return callback({statusCode: 201, downloadURL: currentJob.downloadURL});
-    // }
+    if (currentJob.downloadURL) {
+      return callback({statusCode: 201, downloadURL: currentJob.downloadURL});
+    }
     request({
         method: 'POST',
         url: REMOTEURL,
