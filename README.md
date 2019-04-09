@@ -166,3 +166,36 @@ If the job is still running it will return:
 ```
 
 Otherwise it will send a *output.zip* as attachment.
+
+
+### Files upload
+
+```
+curl -X POST -F file=@package.json 'http://vialactea-sg.oact.inaf.it:3000/api/containers/acaland/upload'
+```
+
+It returns:
+
+```
+{
+  "result": {
+    "files": {
+      "file": [{
+        "container": "acaland",
+        "name": "bb71487d-0351-49c1-82d4-0eb0a4cbe439.json",
+        "type": "application/octet-stream",
+        "field": "file",
+        "originalFilename": "package.json",
+        "size": 848
+      }]
+    },
+    "fields": {}
+  }
+}
+```
+
+You can later download the same file at:
+
+```
+http://vialactea-sg.oact.inaf.it:3000/api/containers/acaland/download/bb71487d-0351-49c1-82d4-0eb0a4cbe439.json
+```
