@@ -30,7 +30,7 @@
   "relations": {},
   "acls": [],
   "methods": {
-    "prototype.output": {
+    "prototype.getOutput": {
       "accepts": [
 
       ],
@@ -47,14 +47,27 @@
       "description": "Return the output of the current job",
       "http": [
         {
-          "path": "/output",
-          "verb": "get",
-          "errorStatus": 404
-        },
-        {
           "path": "/getOutput",
           "verb": "get",
           "errorStatus": 404
+        }
+      ]
+    },
+    "prototype.output": {
+      "accepts": [],
+      "returns": [
+        {
+          "arg": "outputURL",
+          "type": "string",
+          "root": false,
+          "description": "The URL where you can download the output zip"
+        }
+      ],
+      "description": "Check the status and return the URL for the output",
+      "http": [
+        {
+          "path": "/output",
+          "verb": "get"
         }
       ]
     }
