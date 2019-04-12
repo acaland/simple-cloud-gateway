@@ -214,7 +214,7 @@ module.exports = function(Job) {
         "value": "http://localhost:3000/api/containers/acaland/download/script_idl.tar"
       },
       {
-        "name": "vialactea_tap_sedfit_v7_nospawn",
+        "name": "vialactea_tap_sedfit_v7_nospawn.pro",
         "type": "URL",
         "value": "http://localhost:3000/api/containers/acaland/download/vialactea_tap_sedfit_v7_nospawn.pro"
       }]
