@@ -3,6 +3,7 @@
 var request = require("request");
 var fs = require("fs");
 var AdmZip = require("adm-zip");
+const axios = require("axios");
 
 var destFile = "x509up.CESNET-VisIVO";
 var REMOTEURL = "http://vialactea-sg.oact.inaf.it:8080/wspgrade/RemoteServlet";
@@ -41,6 +42,22 @@ function downloadFile(url, dest, _cb) {
     .on("error", function(err) {
       _cb(err);
     });
+}
+
+async function downloadFileAsync(url, dest) {
+  const writer = fs.createWriteStream(dest);
+  const response = await axios({
+    url,
+    method: "GET",
+    responseType: "stream"
+  });
+
+  response.data.pipe(writer);
+
+  return new Promise((resolve, reject) => {
+    writer.on("finish", resolve);
+    writer.on("error", reject);
+  });
 }
 
 function checkStatus(jobId, callback) {
@@ -103,6 +120,28 @@ function downloadOutput(job, container, callback) {
     );
 }
 
+async function prepareInputZip(inputs, appId) {
+  var inputZip = new AdmZip();
+  for (var i = 0; i < inputs.length; i++) {
+    let currentItem = inputs[i];
+    if (currentItem.type == "string") {
+      fs.writeFileSync(currentItem.name, currentItem.value);
+      inputZip.addLocalFile(currentItem.name);
+    }
+    if (currentItem.type == "URL" || currentItem.type == "url") {
+      try {
+        const resp = await axios.get(currentItem.value);
+        fs.writeFileSync(currentItem.name, resp.data);
+        inputZip.addLocalFile(currentItem.name);
+      } catch (err) {
+        console.log(err);
+        return err;
+      }
+    }
+  }
+  inputZip.writeZip(appId + "_inputs.zip");
+}
+
 module.exports = function(Job) {
   Job.afterRemote("findById", function(context, modelInstance, next) {
     console.log("before findById", context.args.id);
@@ -146,13 +185,55 @@ module.exports = function(Job) {
     var appId = context.args.data.appId;
     // console.log(context.args);
     var inputZipURL = context.args.data.inputZipURL;
-    if (!appId || !inputZipURL) {
-      console.log("appId or inputZipURL is missing")
-      return res.status(500).send({
-        error: "appId or inputZipURL is missing"
+    var inputs = context.args.data.inputs
+      ? JSON.parse(context.args.data.inputs)
+      : null;
+    console.log("Inputs", typeof inputs);
+    console.log(inputs);
+
+    /*
+
+      [{
+        "name": "execute.bin",
+        "type": "URL",
+        "value": "http://localhost:3000/api/containers/acaland/download/SedFit_execute.bin"
+      },
+      {
+        "name": "fit_type",
+        "type": "string",
+        "value": "0"
+      },
+      {
+        "name": "params",
+        "type": "string",
+        "value": "[350,250,160,70],[210.906,660.184,747.864,592.131],[4.84341,16.768,10.8736,27.4032],[1,1,1,1],7992.19,0.8,sed_weights=[1,1,1],use_wave=[350,250,160,70],outdir='./',delta_chi2=3"
+      },
+      {
+        "name": "script_idl.tar",
+        "type": "URL",
+        "value": "http://localhost:3000/api/containers/acaland/download/script_idl.tar"
+      },
+      {
+        "name": "vialactea_tap_sedfit_v7_nospawn",
+        "type": "URL",
+        "value": "http://localhost:3000/api/containers/acaland/download/vialactea_tap_sedfit_v7_nospawn.pro"
+      }]
+
+
+    */
+    if (!(inputZipURL || inputs)) {
+      console.log("inputs or inputZipURL is missing");
+      return res.status(404).send({
+        error: "inputs or inputZipURL is missing"
       });
     }
-      
+    if (!appId) {
+      console.log("appId is missing");
+      return res.status(404).send({
+        error: "appId is missing"
+      });
+    }
+
     console.log("Retrieving proxy from eTokenServer");
     downloadProxy(function(err) {
       if (err)
@@ -162,51 +243,63 @@ module.exports = function(Job) {
 
       var App = app.models.App;
 
-      
       console.log("Looking for appId", appId);
-      App.findById(appId, function(err, instance) {
+      App.findById(appId, async function(err, instance) {
         var workflowURL = instance.workflowURL;
         var portmappingURL = instance.portmapping;
         var credentialId = instance.credentialId;
 
         // salvare su temp directory con un identificativo univoco
-        console.log("Retrieving workflow file from", workflowURL);
+        /* console.log("Retrieving workflow file from", workflowURL);
         downloadFile(workflowURL, "workflow.xml", function(err) {
           console.log("Retrieving input files from", inputZipURL);
+    
           downloadFile(inputZipURL, "inputs.zip", function(err) {
             console.log("Retrieving portmapping.txt from", portmappingURL);
-            downloadFile(portmappingURL, "portmapping.txt", function(err) {
-              var formData = {
-                m: "submit",
-                pass: REMOTEPASSWORD,
-                wfdesc: fs.createReadStream("workflow.xml"),
-                inputzip: fs.createReadStream("inputs.zip"),
-                portmapping: fs.createReadStream("portmapping.txt"),
-                certs: fs.createReadStream("certs.zip")
-              };
-              console.log("Ready to submit the job to the gUSE Remote APIs");
-              request.post(
-                {
-                  url: REMOTEURL,
-                  formData: formData
-                },
-                function optionalCallback(err, httpResponse, body) {
-                  if (err) console.log(err);
-                  console.log(
-                    httpResponse.statusCode,
-                    httpResponse.statusMessage
-                  );
-                  console.log("jobId:", body);
-                  context.args.data.submissionDate = Date.now();
-                  context.args.data.jobId = body;
-                  context.args.data.status = "submitted";
-                  // salvataggio su db
-                  next();
-                }
-              );
-            });
-          });
-        });
+            downloadFile(portmappingURL, "portmapping.txt", function(err) { */
+
+        try {
+          console.log("Retrieving workflow file from", workflowURL);
+          await downloadFileAsync(workflowURL, "workflow.xml");
+          if (inputs && inputs.length > 0) {
+            console.log("Building inputZip file", inputZipURL);
+            await prepareInputZip(inputs, appId);
+          } else {
+            console.log("Retrieving input files from", inputZipURL);
+            await downloadFileAsync(inputZipURL, appId + "_inputs.zip");
+          }
+          console.log("Retrieving portmapping.txt from", portmappingURL);
+          await downloadFileAsync(portmappingURL, "portmapping.txt");
+        } catch (err) {
+          console.log(err);
+
+          return next(err);
+        }
+        var formData = {
+          m: "submit",
+          pass: REMOTEPASSWORD,
+          wfdesc: fs.createReadStream("workflow.xml"),
+          inputzip: fs.createReadStream(appId + "_inputs.zip"),
+          portmapping: fs.createReadStream("portmapping.txt"),
+          certs: fs.createReadStream("certs.zip")
+        };
+        console.log("Ready to submit the job to the gUSE Remote APIs");
+        request.post(
+          {
+            url: REMOTEURL,
+            formData: formData
+          },
+          function(err, httpResponse, body) {
+            if (err) console.log(err);
+            console.log(httpResponse.statusCode, httpResponse.statusMessage);
+            console.log("jobId:", body);
+            context.args.data.submissionDate = Date.now();
+            context.args.data.jobId = body;
+            context.args.data.status = "submitted";
+            // salvataggio su db
+            next();
+          }
+        );
       });
     });
   });
@@ -222,7 +315,7 @@ module.exports = function(Job) {
 
     var currentJob = this;
     const jobId = currentJob.jobId;
-    var currentUser = currentJob.inputZipURL.split("/")[5];
+    var currentUser = currentJob.inputZipURL ? currentJob.inputZipURL.split("/")[5] : "acaland";
     console.log("jobId", jobId);
 
     var formData = {
@@ -231,15 +324,19 @@ module.exports = function(Job) {
       pass: REMOTEPASSWORD
     };
     console.log("Job", currentJob);
-    if (currentJob.status != "finished" && currentJob.status != "Downloaded") {
+    if (
+      currentJob.status != "finished" &&
+      currentJob.status != "Downloaded" &&
+      currentJob.status != "error"
+    ) {
       return callback({
         statusCode: 404,
         message: "Job status " + currentJob.status
       });
     }
     var outputFile =
-        "./server/storage/" + currentUser + "/" + jobId + "_output.zip";
-      console.log(outputFile);
+      "./server/storage/" + currentUser + "/" + jobId + "_output.zip";
+    console.log(outputFile);
     if (currentJob.downloadURL) {
       return callback(
         null,
@@ -322,13 +419,10 @@ module.exports = function(Job) {
           return callback(err);
         }
       });
-      if (jobStatus == "finished") {
+      if (jobStatus == "finished" || jobStatus == "error") {
         // download the output and return the URL for downloading it
-        var currentUser = currentJob.inputZipURL.split("/")[5];
-        downloadOutput(currentJob, currentUser, function(
-          err,
-          downloadURL
-        ) {
+        var currentUser = currentJob.inputZipURL ? currentJob.inputZipURL.split("/")[5] : "acaland";
+        downloadOutput(currentJob, currentUser, function(err, downloadURL) {
           if (err) {
             callback(err);
           }
