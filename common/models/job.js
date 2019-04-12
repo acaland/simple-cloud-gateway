@@ -130,8 +130,9 @@ async function prepareInputZip(inputs, appId) {
     }
     if (currentItem.type == "URL" || currentItem.type == "url") {
       try {
-        const resp = await axios.get(currentItem.value);
-        fs.writeFileSync(currentItem.name, resp.data);
+        // const resp = await axios.get(currentItem.value);
+        // fs.writeFileSync(currentItem.name, resp.data);
+        await downloadFileAsync(currentItem.value, currentItem.name)
         inputZip.addLocalFile(currentItem.name);
       } catch (err) {
         console.log(err);
