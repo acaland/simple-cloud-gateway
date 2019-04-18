@@ -14,10 +14,10 @@
     ]
   },
   "User": {
-    "dataSource": "db"
+    "dataSource": "mongoDS"
   },
   "AccessToken": {
-    "dataSource": "db",
+    "dataSource": "mongoDS",
     "public": false
   },
   "ACL": {

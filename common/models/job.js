@@ -132,7 +132,7 @@ async function prepareInputZip(inputs, appId) {
       try {
         // const resp = await axios.get(currentItem.value);
         // fs.writeFileSync(currentItem.name, resp.data);
-        await downloadFileAsync(currentItem.value, currentItem.name)
+        await downloadFileAsync(currentItem.value, currentItem.name);
         inputZip.addLocalFile(currentItem.name);
       } catch (err) {
         console.log(err);
@@ -179,11 +179,31 @@ module.exports = function(Job) {
     );
   });
 
+  Job.beforeRemote("find", function(context, unused, next) {
+    console.log("siamo in find");
+    var req = context.req;
+    var userId = req.accessToken.userId;
+    const filter = context.args.filter;
+    // context.args.filter = { "where": { "owner": { "like" : "5cb838561bb89606af204e0c"}}};
+    // context.args.filter = { "where": { "ownerId": "5cb838561bb89606af204e0c"}};
+    if (filter) {
+        context.args.filter["where"] =  { "owner": userId };
+    } else {
+        context.args.filter = { "where": { "owner": userId }};
+    }
+    next();
+  });
+
+
+
   Job.beforeRemote("create", function(context, user, next) {
     console.log("Prepare for job submission...");
+    console.log("Current user", user);
     var req = context.req;
     var res = context.res;
     var appId = context.args.data.appId;
+    var userId = req.accessToken.userId;
+    console.log("userId", userId);
     // console.log(context.args);
     var inputZipURL = context.args.data.inputZipURL;
     var inputs = context.args.data.inputs
@@ -297,6 +317,7 @@ module.exports = function(Job) {
             context.args.data.submissionDate = Date.now();
             context.args.data.jobId = body;
             context.args.data.status = "submitted";
+            context.args.data.owner = userId;
             // salvataggio su db
             next();
           }
