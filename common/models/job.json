@@ -50,7 +50,9 @@
   ],
   "methods": {
     "prototype.getOutput": {
-      "accepts": [],
+      "accepts": [
+        { "arg": "req", "type": "object", "http": {"source": "req"} } 
+      ],
       "returns": [
         {
           "arg": "data",
@@ -83,7 +85,9 @@
       ]
     },
     "prototype.output": {
-      "accepts": [],
+      "accepts": [
+        { "arg": "req", "type": "object", "http": {"source": "req"} } 
+      ],
       "returns": [
         {
           "arg": "outputURL",

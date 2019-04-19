@@ -126,7 +126,41 @@ curl -X POST --header 'Content-Type: application/json' --header 'Accept: applica
 }
 ```
 
+Alternative form, passing input data separately:
 
+```
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ \ 
+     "appId": "5cb991ad24fbee230e63a5c7", \ 
+     "inputs": [ \ 
+         { \ 
+             "name": "execute.bin", \ 
+             "type": "URL", \ 
+             "value": "http://localhost:3000/api/containers/visivo/download/SedFit_execute.bin" \ 
+         }, \ 
+         { \ 
+             "name": "fit_type", \ 
+             "type": "string", \ 
+             "value": "0" \ 
+         }, \ 
+         { \ 
+             "name": "params", \ 
+             "type": "string", \ 
+             "value": "[350,250,160,70],[210.906,660.184,747.864,592.131],[4.84341,16.768,10.8736,27.4032],[1,1,1,1],7992.19,0.8,sed_weights=[1,1,1],use_wave=[350,250,160,70],outdir=%27./%27,delta_chi2=3" \ 
+         }, \ 
+         { \ 
+             "name": "script_idl.tar", \ 
+             "type": "URL", \ 
+             "value": "http://localhost:3000/api/containers/visivo/download/script_idl.tar" \ 
+         }, \ 
+         { \ 
+             "name": "vialactea_tap_sedfit_v7_nospawn.pro", \ 
+             "type": "URL", \ 
+             "value": "http://localhost:3000/api/containers/visivo/download/vialactea_tap_sedfit_v7_nospawn.pro" \ 
+         } \ 
+     ] \ 
+ }' 'http://localhost:3000/api/jobs?access_token=4NC1zvulSkGDEAwuLQWZksqwUlaNEIiThH6GkeCI5UYSa7mgiAgu3ziOdAxPjsS0'
+ ```
+ 
 
 ### Job monitoring
 
@@ -166,6 +200,16 @@ If the job is still running it will return:
 ```
 
 Otherwise it will send a *output.zip* as attachment.
+
+### Container creation
+
+
+```
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ \ 
+ "name": "visivo" \ 
+ }' 'http://localhost:3000/api/containers?access_token=4NC1zvulSkGDEAwuLQWZksqwUlaNEIiThH6GkeCI5UYSa7mgiAgu3ziOdAxPjsS0'
+```
+
 
 
 ### Files upload

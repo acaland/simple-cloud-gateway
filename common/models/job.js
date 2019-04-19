@@ -180,21 +180,19 @@ module.exports = function(Job) {
   });
 
   Job.beforeRemote("find", function(context, unused, next) {
-    console.log("siamo in find");
+    console.log("siamo in Job find");
     var req = context.req;
     var userId = req.accessToken.userId;
     const filter = context.args.filter;
     // context.args.filter = { "where": { "owner": { "like" : "5cb838561bb89606af204e0c"}}};
     // context.args.filter = { "where": { "ownerId": "5cb838561bb89606af204e0c"}};
     if (filter) {
-        context.args.filter["where"] =  { "owner": userId };
+      context.args.filter["where"] = { owner: userId };
     } else {
-        context.args.filter = { "where": { "owner": userId }};
+      context.args.filter = { where: { owner: userId } };
     }
     next();
   });
-
-
 
   Job.beforeRemote("create", function(context, user, next) {
     console.log("Prepare for job submission...");
@@ -206,9 +204,9 @@ module.exports = function(Job) {
     console.log("userId", userId);
     // console.log(context.args);
     var inputZipURL = context.args.data.inputZipURL;
-    var inputs = context.args.data.inputs
-      ? JSON.parse(context.args.data.inputs)
-      : null;
+    var inputs = context.args.data.inputs;
+      // ? JSON.parse(context.args.data.inputs)
+      // : null;
     console.log("Inputs", typeof inputs);
     console.log(inputs);
 
@@ -266,6 +264,9 @@ module.exports = function(Job) {
 
       console.log("Looking for appId", appId);
       App.findById(appId, async function(err, instance) {
+        
+        console.log("instance", instance);
+        if (!instance) return next(new Error("appId not found"));
         var workflowURL = instance.workflowURL;
         var portmappingURL = instance.portmapping;
         var credentialId = instance.credentialId;
@@ -283,7 +284,7 @@ module.exports = function(Job) {
           console.log("Retrieving workflow file from", workflowURL);
           await downloadFileAsync(workflowURL, "workflow.xml");
           if (inputs && inputs.length > 0) {
-            console.log("Building inputZip file", inputZipURL);
+            console.log("Building inputZip file", appId + "_inputs.zip");
             await prepareInputZip(inputs, appId);
           } else {
             console.log("Retrieving input files from", inputZipURL);
@@ -332,55 +333,62 @@ module.exports = function(Job) {
    * @param {Function(Error, buffer)} callback
    */
 
-  Job.prototype.getOutput = function(callback, id) {
+  Job.prototype.getOutput = function(req, callback, id) {
     // var data = Buffer.from('this is a tést');
 
     var currentJob = this;
     const jobId = currentJob.jobId;
-    var currentUser = currentJob.inputZipURL ? currentJob.inputZipURL.split("/")[5] : "acaland";
-    console.log("jobId", jobId);
+    // var userId = req.accessToken.userId;
+    req.accessToken.user(function(err, user) {
+      if (err) return callback(err);
+      console.log("username", user.username);
+      // var currentUser = currentJob.inputZipURL
+      //   ? currentJob.inputZipURL.split("/")[5]
+      //   : "acaland";
+      var currentUser = user.username;
+      console.log("jobId", jobId);
 
-    var formData = {
-      m: "download",
-      ID: jobId,
-      pass: REMOTEPASSWORD
-    };
-    console.log("Job", currentJob);
-    if (
-      currentJob.status != "finished" &&
-      currentJob.status != "Downloaded" &&
-      currentJob.status != "error"
-    ) {
-      return callback({
-        statusCode: 404,
-        message: "Job status " + currentJob.status
-      });
-    }
-    var outputFile =
-      "./server/storage/" + currentUser + "/" + jobId + "_output.zip";
-    console.log(outputFile);
-    if (currentJob.downloadURL) {
-      return callback(
-        null,
-        fs.createReadStream(outputFile),
-        "application/octet-stream",
-        "attachment; filename=output.zip"
-      );
-    }
-
-    downloadOutput(currentJob, currentUser, function(err, downloadURL) {
-      if (err) {
-        return callback(err, null);
+      var formData = {
+        m: "download",
+        ID: jobId,
+        pass: REMOTEPASSWORD
+      };
+      console.log("Job", currentJob);
+      if (
+        currentJob.status != "finished" &&
+        currentJob.status != "Downloaded" &&
+        currentJob.status != "error"
+      ) {
+        return callback({
+          statusCode: 404,
+          message: "Job status " + currentJob.status
+        });
+      }
+      var outputFile =
+        "./server/storage/" + currentUser + "/" + jobId + "_output.zip";
+      console.log(outputFile);
+      if (currentJob.downloadURL) {
+        return callback(
+          null,
+          fs.createReadStream(outputFile),
+          "application/octet-stream",
+          "attachment; filename=output.zip"
+        );
       }
 
-      return callback(
-        null,
-        fs.createReadStream(outputFile),
-        "application/octet-stream",
-        "attachment; filename=output.zip"
-      );
-    });
-    /*
+      downloadOutput(currentJob, currentUser, function(err, downloadURL) {
+        if (err) {
+          return callback(err, null);
+        }
+
+        return callback(
+          null,
+          fs.createReadStream(outputFile),
+          "application/octet-stream",
+          "attachment; filename=output.zip"
+        );
+      });
+      /*
     request({
         method: 'POST',
         url: REMOTEURL,
@@ -424,9 +432,10 @@ module.exports = function(Job) {
     // console.log(jobId);
     // TODO
   */
+    });
   };
 
-  Job.prototype.output = function(callback) {
+  Job.prototype.output = function(req, callback) {
     var currentJob = this;
     // console.log("currentJob", currentJob);
     if (currentJob.downloadURL) {
@@ -443,13 +452,25 @@ module.exports = function(Job) {
       });
       if (jobStatus == "finished" || jobStatus == "error") {
         // download the output and return the URL for downloading it
-        var currentUser = currentJob.inputZipURL ? currentJob.inputZipURL.split("/")[5] : "acaland";
-        downloadOutput(currentJob, currentUser, function(err, downloadURL) {
-          if (err) {
-            callback(err);
-          }
+
+        req.accessToken.user(function(err, user) {
+          if (err) return callback(err);
+          console.log("username", user.username);
+          // var currentUser = currentJob.inputZipURL
+          //   ? currentJob.inputZipURL.split("/")[5]
+          //   : "acaland";
+          var currentUser = user.username;
+
+        // var currentUser = currentJob.inputZipURL
+        //   ? currentJob.inputZipURL.split("/")[5]
+        //   : "acaland";
+          downloadOutput(currentJob, currentUser, function(err, downloadURL) {
+            if (err) return callback(err);
+          
           // currentJob.updateAttribute("downloadURL", downloadURL);
-          return callback(null, downloadURL);
+            return callback(null, downloadURL);
+          
+          });
         });
       } else {
         var error = new Error("Job status is invalid: " + jobStatus);
@@ -458,6 +479,6 @@ module.exports = function(Job) {
       }
     });
     // // TODO:
-    console.log(this);
+    // console.log(this);
   };
 };
