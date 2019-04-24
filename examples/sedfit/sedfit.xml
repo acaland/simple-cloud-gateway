@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<workflow download="all" export="proj" mainabst="" maingraf="SedFitNoSpawn" mainreal="SedFitNoSpawn" name="SedFitNoSpawn">
+   <graf name="SedFitNoSpawn" text="2018-7-10">
+      <job name="SEDFit" text="Description of Job" x="121" y="26">
+         <input name="fit_type" prejob="" preoutput="" seq="0" text="Description of Port" x="121" y="10"/>
+         <input name="params" prejob="" preoutput="" seq="1" text="Description of Port" x="137" y="10"/>
+         <input name="script_idl.tar" prejob="" preoutput="" seq="2" text="Description of Port" x="153" y="10"/>
+         <input name="vialactea_tap_sedfit_v7_nospawn.pro" prejob="" preoutput="" seq="4" text="Description of Port" x="185" y="26"/>
+         <output name="sedfit_output.dat" seq="3" text="Description of Port" x="169" y="10"/>
+      </job>
+   </graf>
+   <real abst="" graf="SedFitNoSpawn" name="SedFitNoSpawn" text="2018-7-10">
+      <job name="SEDFit" text="Description of Job" x="121" y="26">
+         <input name="fit_type" prejob="" preoutput="" seq="0" text="Description of Port" x="121" y="10">
+            <port_prop desc="null" inh="null" key="eparam" label="null" value="0"/>
+            <port_prop desc="null" inh="null" key="file" label="null" value="C:/fakepath/fit_type"/>
+            <port_prop desc="null" inh="null" key="intname" label="null" value="fit_type"/>
+            <port_prop desc="null" inh="null" key="dpid" label="null" value="0"/>
+            <port_prop desc="null" inh="null" key="pequaltype" label="null" value="0"/>
+         </input>
+         <input name="params" prejob="" preoutput="" seq="1" text="Description of Port" x="137" y="10">
+            <port_prop desc="null" inh="null" key="eparam" label="null" value="0"/>
+            <port_prop desc="null" inh="null" key="file" label="null" value="C:/fakepath/params"/>
+            <port_prop desc="null" inh="null" key="intname" label="null" value="params"/>
+            <port_prop desc="null" inh="null" key="dpid" label="null" value="1"/>
+            <port_prop desc="null" inh="null" key="pequaltype" label="null" value="0"/>
+         </input>
+         <input name="script_idl.tar" prejob="" preoutput="" seq="2" text="Description of Port" x="153" y="10">
+            <port_prop desc="null" inh="null" key="eparam" label="null" value="0"/>
+            <port_prop desc="null" inh="null" key="file" label="null" value="C:/fakepath/script_idl.tar"/>
+            <port_prop desc="null" inh="null" key="intname" label="null" value="script_idl.tar"/>
+            <port_prop desc="null" inh="null" key="dpid" label="null" value="2"/>
+            <port_prop desc="null" inh="null" key="pequaltype" label="null" value="0"/>
+         </input>
+         <input name="vialactea_tap_sedfit_v7_nospawn.pro" prejob="" preoutput="" seq="4" text="Description of Port" x="185" y="26">
+            <port_prop desc="null" inh="null" key="eparam" label="null" value="0"/>
+            <port_prop desc="null" inh="null" key="file" label="null" value="C:/fakepath/vialactea_tap_sedfit_v7.pro"/>
+            <port_prop desc="null" inh="null" key="intname" label="null" value="vialactea_tap_sedfit_v7_nospawn.pro"/>
+            <port_prop desc="null" inh="null" key="dpid" label="null" value="4"/>
+            <port_prop desc="null" inh="null" key="pequaltype" label="null" value="0"/>
+         </input>
+         <output name="sedfit_output.dat" seq="3" text="Description of Port" x="169" y="10">
+            <port_prop desc="null" inh="null" key="maincount0" label="null" value="1"/>
+            <port_prop desc="null" inh="null" key="type0" label="null" value="permament"/>
+            <port_prop desc="null" inh="null" key="intname" label="null" value="sedfit_output.dat"/>
+            <port_prop desc="null" inh="null" key="maincount" label="null" value="1"/>
+         </output>
+         <execute desc="" inh="" key="module" label="" value="true"/>
+         <execute desc="null" inh="null" key="gridtype" label="null" value="cloud"/>
+         <execute desc="null" inh="null" key="binary" label="null" value="C:/fakepath/execute.bin"/>
+         <execute desc="null" inh="null" key="jobistype" label="null" value="binary"/>
+         <execute desc="null" inh="null" key="grid" label="null" value="CESNET-VisIVO"/>
+         <execute desc="null" inh="null" key="tmp*resource" label="null" value="serial"/>
+         <execute desc="null" inh="null" key="type" label="null" value="Sequence"/>
+         <execute desc="null" inh="null" key="tmp*grid" label="null" value="muoni-server-02.oact.inaf.it"/>
+         <execute desc="null" inh="null" key="instancetype" label="null" value="Medium"/>
+         <history mdyid="modify.output.intname" nvalue="sedfit_output.dat" ovalue="sed_returned.dat" port="3" tim="2019-03-21-17:25:48" user="10196"/>
+         <history mdyid="modify.input.file" nvalue="C:/fakepath/vialactea_tap_sedfit_v7.pro" ovalue="C:/fakepath/vialactea_tap_sedfit_v7_nospawn.pro" port="4" tim="2019-03-21-17:19:51" user="10196"/>
+         <history mdyid="modify.job.binary" nvalue="C:/fakepath/execute.bin" ovalue="C:/fakepath/sedfitgdl.sh" port="-" tim="2019-03-21-17:06:50" user="10196"/>
+         <history mdyid="new.input.eparam" nvalue="0" ovalue="" port="4" tim="2019-03-21-16:42:22" user="10196"/>
+         <history mdyid="new.input.file" nvalue="C:/fakepath/vialactea_tap_sedfit_v7_nospawn.pro" ovalue="" port="4" tim="2019-03-21-16:42:22" user="10196"/>
+         <history mdyid="new.input.intname" nvalue="vialactea_tap_sedfit_v7_nospawn.pro" ovalue="" port="4" tim="2019-03-21-16:42:22" user="10196"/>
+         <history mdyid="new.input.dpid" nvalue="4" ovalue="" port="4" tim="2019-03-21-16:42:22" user="10196"/>
+         <history mdyid="new.input.pequaltype" nvalue="0" ovalue="" port="4" tim="2019-03-21-16:42:22" user="10196"/>
+         <history mdyid="new.output.maincount0" nvalue="1" ovalue="" port="5" tim="2019-03-21-16:42:22" user="10196"/>
+         <history mdyid="new.output.intname" nvalue="sed_returned.dat" ovalue="" port="5" tim="2019-03-21-16:42:22" user="10196"/>
+         <history mdyid="new.output.type0" nvalue="permament" ovalue="" port="5" tim="2019-03-21-16:42:22" user="10196"/>
+         <history mdyid="new.output.maincount" nvalue="1" ovalue="" port="5" tim="2019-03-21-16:42:22" user="10196"/>
+         <history mdyid="modify.job.instancetype" nvalue="Medium" ovalue="Small" port="-" tim="2019-03-12-12:23:48" user="10196"/>
+         <history mdyid="modify.job.grid" nvalue="CESNET-VisIVO" ovalue="CESNET-MetaCloud" port="-" tim="2019-03-12-12:06:41" user="10196"/>
+         <history mdyid="modify.job.breaktimeout" nvalue="0" ovalue="60" port="-" tim="2018-12-20-09:50:33" user="10196"/>
+         <history mdyid="modify.job.grid" nvalue="CESNET-MetaCloud" ovalue="CESNET-VisIVO" port="-" tim="2018-12-20-09:50:33" user="10196"/>
+         <history mdyid="modify.job.gridtype" nvalue="cloud" ovalue="pbs" port="-" tim="2018-12-19-15:13:04" user="10196"/>
+         <history mdyid="delete.job.jobmanager" nvalue="" ovalue="-" port="-" tim="2018-12-19-15:13:04" user="10196"/>
+         <history mdyid="delete.job.resource" nvalue="" ovalue="serial" port="-" tim="2018-12-19-15:13:04" user="10196"/>
+         <history mdyid="modify.job.grid" nvalue="CESNET-VisIVO" ovalue="muoni-server-02.oact.inaf.it" port="-" tim="2018-12-19-15:13:04" user="10196"/>
+         <history mdyid="new.job.breakpoint" nvalue="none" ovalue="" port="-" tim="2018-12-19-15:13:04" user="10196"/>
+         <history mdyid="new.job.breaktimeout" nvalue="60" ovalue="" port="-" tim="2018-12-19-15:13:04" user="10196"/>
+         <history mdyid="new.job.instancetype" nvalue="Small" ovalue="" port="-" tim="2018-12-19-15:13:04" user="10196"/>
+         <history mdyid="modify.job.breaktimeout" nvalue="0" ovalue="60" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.intname" nvalue="params" ovalue="" port="1" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.file" nvalue="C:/fakepath/params" ovalue="" port="1" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.eparam" nvalue="0" ovalue="" port="1" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.pequaltype" nvalue="0" ovalue="" port="0" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.dpid" nvalue="0" ovalue="" port="0" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.intname" nvalue="fit_type" ovalue="" port="0" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.file" nvalue="C:/fakepath/fit_type" ovalue="" port="0" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.eparam" nvalue="0" ovalue="" port="0" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.dpid" nvalue="1" ovalue="" port="1" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.pequaltype" nvalue="0" ovalue="" port="1" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.eparam" nvalue="0" ovalue="" port="2" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.file" nvalue="C:/fakepath/script_idl.tar" ovalue="" port="2" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.intname" nvalue="script_idl.tar" ovalue="" port="2" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.dpid" nvalue="2" ovalue="" port="2" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.input.pequaltype" nvalue="0" ovalue="" port="2" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.output.maincount0" nvalue="1" ovalue="" port="3" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.output.type0" nvalue="permament" ovalue="" port="3" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.job.tmp*grid" nvalue="muoni-server-02.oact.inaf.it" ovalue="" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.job.breaktimeout" nvalue="60" ovalue="" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.job.type" nvalue="Sequence" ovalue="" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.job.tmp*resource" nvalue="serial" ovalue="" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.job.grid" nvalue="muoni-server-02.oact.inaf.it" ovalue="" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.job.resource" nvalue="serial" ovalue="" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.job.breakpoint" nvalue="none" ovalue="" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.job.jobistype" nvalue="binary" ovalue="" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.job.jobmanager" nvalue="-" ovalue="" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.job.binary" nvalue="C:/fakepath/sedfitgdl.sh" ovalue="" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+         <history mdyid="new.job.gridtype" nvalue="pbs" ovalue="" port="-" tim="2018-12-19-15:10:50" user="10196"/>
+      </job>
+      <instances>
+         <instance name="status" rtid="1299962132785033zentest" value="6"/>
+         <instance name="text" rtid="1299962132785033zentest" value="2019-3-21 17:36"/>
+         <instance name="storage" rtid="1299962132785033zentest" value="http://151.97.16.106:8080/storage"/>
+         <instance name="storage" rtid="1298203207470033zentest" value="http://151.97.16.106:8080/storage"/>
+         <instance name="text" rtid="1298203207470033zentest" value="correctExecute.bin"/>
+         <instance name="status" rtid="1298203207470033zentest" value="6"/>
+         <instance name="storage" rtid="1298715063622033zentest" value="http://151.97.16.106:8080/storage"/>
+         <instance name="text" rtid="1298715063622033zentest" value="CorrectFunction"/>
+         <instance name="status" rtid="1298715063622033zentest" value="6"/>
+         <instance name="storage" rtid="1298973642238033zentest" value="http://151.97.16.106:8080/storage"/>
+         <instance name="text" rtid="1298973642238033zentest" value="CorrectFunctionNameInScript"/>
+         <instance name="status" rtid="1298973642238033zentest" value="6"/>
+         <instance name="storage" rtid="1299426960527033zentest" value="http://151.97.16.106:8080/storage"/>
+         <instance name="text" rtid="1299426960527033zentest" value="2019-3-21 17:27"/>
+         <instance name="status" rtid="1299426960527033zentest" value="6"/>
+         <jobstatus job="SEDFit" pid="0" resource="CESNET-VisIVO (147.228.242.12)" rtid="1298203207470033zentest" status="6"/>
+         <jobstatus job="SEDFit" pid="0" resource="CESNET-VisIVO (147.228.242.12)" rtid="1298715063622033zentest" status="6"/>
+         <jobstatus job="SEDFit" pid="0" resource="CESNET-VisIVO (147.228.242.12)" rtid="1298973642238033zentest" status="6"/>
+         <jobstatus job="SEDFit" pid="0" resource="CESNET-VisIVO (147.228.242.12)" rtid="1299426960527033zentest" status="6"/>
+         <jobstatus job="SEDFit" pid="0" resource="CESNET-VisIVO (147.228.242.12)" rtid="1299962132785033zentest" status="6"/>
+      </instances>
+   </real>
+</workflow>

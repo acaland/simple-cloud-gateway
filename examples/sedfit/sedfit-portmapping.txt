@@ -1,0 +1,5 @@
+execute.bin=SedFitNoSpawn/SEDFit
+fit_type=SedFitNoSpawn/SEDFit/0
+params=SedFitNoSpawn/SEDFit/1
+script_idl.tar=SedFitNoSpawn/SEDFit/2
+vialactea_tap_sedfit_v7_nospawn.pro=SedFitNoSpawn/SEDFit/4
