@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<workflow download="all" export="proj" mainabst="" maingraf="Hostname" mainreal="Hostname" name="Hostname">
+   <graf name="Hostname" text="2019-3-18">
+      <job name="Job0" text="Description of Job" x="120" y="20"/>
+   </graf>
+   <real abst="" graf="Hostname" name="Hostname" text="2019-3-18">
+      <job name="Job0" text="Description of Job" x="120" y="20">
+         <execute desc="null" inh="null" key="gridtype" label="null" value="cloud"/>
+         <execute desc="null" inh="null" key="binary" label="null" value="C:/fakepath/execute.bin"/>
+         <execute desc="null" inh="null" key="jobistype" label="null" value="binary"/>
+         <execute desc="null" inh="null" key="grid" label="null" value="CESNET-VisIVO"/>
+         <execute desc="null" inh="null" key="type" label="null" value="Sequence"/>
+         <execute desc="null" inh="null" key="instancetype" label="null" value="Medium"/>
+      </job>
+   </real>
+</workflow>

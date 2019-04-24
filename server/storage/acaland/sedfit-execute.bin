@@ -1,0 +1,41 @@
+#!/bin/bash
+
+path=`pwd`
+tar -xf script_idl.tar
+
+GDL_PATH=/usr/share/gnudatalanguage:/usr/share/gnudatalanguage/lib:$path/script_idl:$path/script_idl/astrolib
+PATH=$PATH:/usr/local/bin
+
+export GDL_PATH
+
+echo "GDL_PATH: "
+echo $GDL_PATH
+echo "PATH: "
+echo $PATH
+
+cp script_idl/astrolib/read_ascii.pro .
+cp vialactea_tap_sedfit_v7_nospawn.pro script_idl/
+
+#ls
+
+value=`cat fit_type`
+fitparams=`cat params`
+
+echo "$value"
+echo "$fitparams"
+
+if [ $value -eq 0 ]; then
+  echo "Performing theoretical SED fitting"
+  gdl -e "sedpar=vialactea_tap_sedfit_v7_nospawn($fitparams)"
+elif [ $value -eq 1 ]; then
+  cp script_idl/astrolib/interpol.pro .
+  echo "Performing greybody thin SED fitting"
+  gdl -e "sedfitgrid_engine_thin_vialactea,$fitparams"
+elif [ $value -eq 2 ]; then
+  cp script_idl/astrolib/interpol.pro .
+  echo "Performing greybody thick SED fitting" 
+  gdl -e "sedfitgrid_engine_thick_vialactea,$fitparams"
+else
+  echo "Chosed SED fitting algorithm NOT valid. Please choose one of the following options: 0=theoretical, 1=greybody thin or 2=greybody thick"
+fi
+
