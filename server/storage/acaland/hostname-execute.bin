@@ -1,0 +1,33 @@
+#!/bin/bash
+/bin/hostname
+/bin/df -h
+#/bin/mount
+echo ""
+echo ""
+
+# ping -c 4 ia2-vialactea.oats.inaf.it
+# echo ""
+# echo ""
+
+# curl --user vialactea:ia2vlkb -L --data "REQUEST=doQuery&VERSION=1.0&LANG=ADQL&FORMAT=csv&QUERY=SELECT TOP 10 * from vlkb_compactsources.sed_models" "http://ia2-vialactea.oats.inaf.it:8080/vlkb/sync?"
+
+whoami
+pwd
+ls -lrt $PWD/..
+echo $HOME
+ls -la $HOME
+# mkdir $HOME/.ssh
+#chmod 700 $HOME/.ssh
+# cat /etc/passwd
+# ls -la $HOME
+# ls -la $HOME/.ssh
+# cat $HOME/.ssh/authorized_keys
+# chmod 600 $HOME/.ssh/authorized_keys
+# cp $HOME/.ssh/authorized_keys $HOME/.ssh/authorized_keys2
+# chmod 644 $HOME/.ssh/authorized_keys
+# cat > $HOME/.ssh/authorized_keys << EOF
+# ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCfn0qdwOLC1BVU+BUBDXDrxzGHZjWRW5V/rh0fKsLqHiPEDM1o2MAnn5lqHjb83MmFB02VrMAbz0cNbDw0GKIduig94tw8XbTUDEIa/fh/vdcXGBgiHcK2fpGS6p6LtiDiwS85UFFLnPlfAEYnGqUICvFXaiSjQCqmVMSIZMnunubG6Mc9l6JP4VS4RYGjHHG0hgDuwEaPWq9aHdBVFAQ9FAwxbjQ2scy6EEXQ5n8nPS/8QHwR7HOTsQzHpJkQfRt/FWgnckVHJPQNbXhMWOJlwuoYyCVHVN7ydb2BacSIwHBrP+m3hrobNACWD6Ns5r/KWRk6fU/DocWA4ohvXG5x acaland@calanducci.oact.inaf.it
+# EOF
+# ls -la $HOME/.ssh
+
+#ssh-keygen -t rsa -b 2048 -f tmpfedcloud
