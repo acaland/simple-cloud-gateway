@@ -82,7 +82,7 @@ function checkStatus(jobId, callback) {
   );
 }
 
-function downloadOutput(job, container, callback) {
+function downloadOutput(job, container, currentHost, callback) {
   var jobId = job.jobId;
   var formData = {
     m: "download",
@@ -101,9 +101,9 @@ function downloadOutput(job, container, callback) {
       callback(err);
     })
     .on("response", function(response) {
-      var baseURL = app.get("url").replace(/\/$/, "");
+      // var baseURL = app.get("url").replace(/\/$/, "");
       var downloadURL =
-        baseURL +
+        currentHost +
         "/api/containers/" +
         container +
         "/download/" +
@@ -376,7 +376,7 @@ module.exports = function(Job) {
         );
       }
 
-      downloadOutput(currentJob, currentUser, function(err, downloadURL) {
+      downloadOutput(currentJob, currentUser, req.headers.host, function(err, downloadURL) {
         if (err) {
           return callback(err, null);
         }
@@ -438,6 +438,8 @@ module.exports = function(Job) {
   Job.prototype.output = function(req, callback) {
     var currentJob = this;
     // console.log("currentJob", currentJob);
+    
+    
     if (currentJob.downloadURL) {
       return callback(null, currentJob.downloadURL);
     }
@@ -464,7 +466,8 @@ module.exports = function(Job) {
         // var currentUser = currentJob.inputZipURL
         //   ? currentJob.inputZipURL.split("/")[5]
         //   : "acaland";
-          downloadOutput(currentJob, currentUser, function(err, downloadURL) {
+        // console.log(req.headers.host);
+          downloadOutput(currentJob, currentUser, req.headers.host, function(err, downloadURL) {
             if (err) return callback(err);
           
           // currentJob.updateAttribute("downloadURL", downloadURL);
