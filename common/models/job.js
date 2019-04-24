@@ -103,7 +103,7 @@ function downloadOutput(job, container, currentHost, callback) {
     .on("response", function(response) {
       // var baseURL = app.get("url").replace(/\/$/, "");
       var downloadURL =
-        currentHost +
+        "http://" + currentHost +
         "/api/containers/" +
         container +
         "/download/" +
