@@ -35,9 +35,9 @@ module.exports = function(App) {
     // context.args.filter = { "where": { "owner": { "like" : "5cb838561bb89606af204e0c"}}};
     // context.args.filter = { "where": { "ownerId": "5cb838561bb89606af204e0c"}};
     if (filter) {
-        context.args.filter["where"] =  { "owner": userId };
+        context.args.filter["where"] =  { "or" : [{ "owner": userId }, {"public": true}]};
     } else {
-        context.args.filter = { "where": { "owner": userId }};
+        context.args.filter = { "where": { "or" : [{ "owner": userId }, {"public": true}]}};
     }
    
     next();
